@@ -11,17 +11,19 @@ class Api {
     String _search;
     String _nextToken;
 
+    String _qtd = '10';
+
     Future<List<Video>> search(String search) async {
         this._search = search;
         Http.Response response =  await Http.get(
-            'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=viewCount&q=$search&type=video&key=$API_KEY'
+            'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=$_qtd&order=viewCount&q=$search&type=video&key=$API_KEY'
         );
         return decode(response);
     }
 
     Future<List<Video>> nextPage() async {
         Http.Response response =  await Http.get(
-                'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=viewCount&q=$_search&type=video&key=$API_KEY&pageToken=$_nextToken'
+                'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=$_qtd&order=viewCount&q=$_search&type=video&key=$API_KEY&pageToken=$_nextToken'
         );
         return decode(response);
     }
