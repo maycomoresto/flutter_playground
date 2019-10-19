@@ -1,3 +1,5 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:favorite_app/blocs/favorite_bloc.dart';
 import 'package:favorite_app/models/video.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,9 @@ class VideoTitle extends StatelessWidget {
 
     @override
     Widget build(BuildContext context) {
+
+        final favoriteBloc = BlocProvider.of<FavoriteBloc>(context);
+
         return Container(
             margin: EdgeInsets.symmetric(vertical: 4),
             child: Column(
@@ -48,13 +53,24 @@ class VideoTitle extends StatelessWidget {
                                     ],
                                 ),
                             ),
-                            IconButton(
-                                icon: Icon(Icons.star_border),
-                                iconSize: 30,
-                                color: Colors.white,
-                                onPressed: () {
+                            StreamBuilder<Map<String, Video>>(
+                                stream: favoriteBloc.outFavorites,
+                                initialData: {},
+                                builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                        return IconButton(
+                                            icon: Icon(snapshot.data.containsKey(video.id) ? Icons.star : Icons.star_border),
+                                            iconSize: 30,
+                                            color: Colors.white,
+                                            onPressed: () {
+                                                favoriteBloc.toggleFavorite(video);
+                                            }
+                                        );
+                                    } else {
+                                        return CircularProgressIndicator();
+                                    }
                                 },
-                            )
+                            ),
                         ],
                     )
                 ],

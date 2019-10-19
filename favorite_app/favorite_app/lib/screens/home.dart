@@ -1,6 +1,8 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:favorite_app/blocs/favorite_bloc.dart';
 import 'package:favorite_app/blocs/videos_bloc.dart';
 import 'package:favorite_app/delegates/data_search.dart';
+import 'package:favorite_app/models/video.dart';
 import 'package:favorite_app/widgets/video_title.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,7 @@ class Home extends StatelessWidget {
     Widget build(BuildContext context) {
 
         final bloc = BlocProvider.of<VideosBloc>(context);
+        final blocFavorite = BlocProvider.of<FavoriteBloc>(context);
 
         return Scaffold(
             appBar: AppBar(
@@ -22,7 +25,14 @@ class Home extends StatelessWidget {
                 actions: <Widget>[
                     Align(
                         alignment: Alignment.center,
-                        child: Text('0'),
+                        child: StreamBuilder<Map<String, Video>>(
+                            stream: blocFavorite.outFavorites,
+                            initialData: {},
+                            builder: (context, snapshot) {
+                                if (snapshot.hasData) return Text('${snapshot.data.length}');
+                                else Text('0');
+                            },
+                        ),
                     ),
                     IconButton(
                         icon: Icon(Icons.star),

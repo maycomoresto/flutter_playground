@@ -4,7 +4,7 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:favorite_app/api.dart';
 import 'package:favorite_app/models/video.dart';
 
-class VideosBloc extends BlocBase {
+class VideosBloc implements BlocBase {
 
     Api api;
     List<Video> videos;
