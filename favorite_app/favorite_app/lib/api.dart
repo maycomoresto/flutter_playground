@@ -8,17 +8,29 @@ const API_KEY = 'AIzaSyCLTe7ACu_oQlpMGIxfdhegr8TUG91WpDU';
 
 class Api {
 
-    search(String search) async {
+    String _search;
+    String _nextToken;
+
+    Future<List<Video>> search(String search) async {
+        this._search = search;
         Http.Response response =  await Http.get(
             'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=viewCount&q=$search&type=video&key=$API_KEY'
         );
-        decode(response);
+        return decode(response);
+    }
+
+    Future<List<Video>> nextPage() async {
+        Http.Response response =  await Http.get(
+                'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=viewCount&q=$_search&type=video&key=$API_KEY&pageToken=$_nextToken'
+        );
+        return decode(response);
     }
 
     List<Video> decode(Http.Response response) {
 
         if (response.statusCode == 200) {
             var decoded = json.decode(response.body);
+            this._nextToken = decoded['nextPageToken'];
             List<Video> videos = decoded['items'].map<Video>(
                 (map) { return  Video.fromJson(map); }
             ).toList();
